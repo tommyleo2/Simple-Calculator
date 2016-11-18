@@ -5,17 +5,19 @@
 
 const string Lexical::errorMsg("ERROR: ");
 
+Lexical::Lexical() {}
+
 Lexical::Lexical(const string &exp) :
     currentTokenPosition(0), currentTokenSize(0) {
     this->exp = exp;
 }
 
 void Lexical::setExpression(const string &exp) {
-    currentTokenSize = currentTokenPosition = 0;
+    parenthesis = currentTokenSize = currentTokenPosition = 0;
     this->exp = exp;
 }
 
-Type Lexical::getToken(float *token) throw(UnrecognizedTokenException) {
+Type Lexical::getToken(float *token) throw(exception) {
     *(int *)token = 0;
     while ((exp[currentTokenPosition] == ' ' ||
             exp[currentTokenPosition] == '\t') &&
@@ -23,6 +25,7 @@ Type Lexical::getToken(float *token) throw(UnrecognizedTokenException) {
         currentTokenPosition++;
     }
     if (currentTokenPosition == exp.size()) {
+        currentTokenPosition++;
         return END;
     }
     char first = exp[currentTokenPosition];
@@ -31,6 +34,7 @@ Type Lexical::getToken(float *token) throw(UnrecognizedTokenException) {
               first == '*' || first == '/')) {
             throw UnrecognizedTokenException(unrecognizedToken());
         }
+
         *(char *)token = first;
         currentTokenPosition++;
         return CHAR;
@@ -46,7 +50,31 @@ Type Lexical::getToken(float *token) throw(UnrecognizedTokenException) {
     return FLOAT;
 }
 
-string &&Lexical::unrecognizedToken() {
+string Lexical::unexpectedToken(const vector<string> &candidate) {
+    stringstream ss;
+    ss << errorMsg << exp << endl;
+    for (int i = 0; i < errorMsg.size() + currentTokenPosition; i++) {
+        if (exp[i - errorMsg.size()] == '\t') {
+            ss << '\t';
+        } else {
+            ss << " ";
+        }
+    }
+    ss << "\b";
+    ss << "^";
+    ss << "  Unexpected Token" << endl;
+    // Todo
+
+    // ss << "Note: Acceptable tokens are: ";
+    // for (int i = 0; i < candidate.size() - 1; i++) {
+    //     ss << "\"" << candidate[i] << "\", ";
+    // }
+    // ss << "\"" << candidate.back() <<  "\"" << endl;
+
+    return ss.str();
+}
+
+string Lexical::unrecognizedToken() {
     stringstream ss;
     ss << errorMsg << exp << endl;
     for (int i = 0; i < errorMsg.size() + currentTokenPosition; i++) {
@@ -58,7 +86,7 @@ string &&Lexical::unrecognizedToken() {
     }
     ss << "^";
     ss << "  Unrecognized Token" << endl;
-    ss << "Note: Acceptable tokens are:"
-       << " numbers, `+`, `-`, '*', '/', '(' and ')'" << endl;
-    return move(ss.str());
+    ss << "Note: Acceptable tokens are: "
+       << "numbers, `+`, `-`, '*', '/', '(' and ')'" << endl;
+    return ss.str();
 }

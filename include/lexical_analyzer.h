@@ -2,6 +2,7 @@
 #define LEXICAL_ANALYZER_H
 
 #include <string>
+#include <vector>
 #include <exception>
 
 using namespace std;
@@ -11,7 +12,7 @@ public:
     string msg;
 
     UnrecognizedTokenException(const string &msg) {
-        this->msg = msg;
+        this->msg = move(msg);
     }
 
     virtual const char *what() const noexcept {
@@ -28,12 +29,13 @@ private:
     static const string errorMsg;
 
 public:
+    Lexical();
     Lexical(const string &exp);
 
     void setExpression(const string &exp);
 
-    Type getToken(float *token) throw (UnrecognizedTokenException);
-    void printError();
+    Type getToken(float *token) throw (exception);
+    string unexpectedToken(const vector<string>& candidate);
 
 private:
     string exp;
@@ -41,7 +43,9 @@ private:
     int currentTokenPosition;
     int currentTokenSize;
 
-    string &&unrecognizedToken();
+    string unrecognizedToken();
+
+    int parenthesis;
 };
 
 #endif /* LEXICAL_ANALYZER_H */
