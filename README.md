@@ -27,8 +27,8 @@ Non-terminal | id | + | - | * | / | ( | ) | $
 E  | E -> TE_ |             | E -> TE_    |            |            | E -> TE_  |             |             | 
 E_ |          | E_ -> +TE_  | E_ -> -TE_  |            |            |           | E_ -> empty | E_ -> empty | 
 T  | T -> FT_ |             | T -> FT_    |            |            | T -> FT_  |             |             | 
-T_ |          | T_ -> empty | T_ -> empty |            |            |           |             | T_ -> empty | 
-F  | F -> N   |             | F -> -N     | T_ -> *FT_ | T_ -> /FT_ | F -> N    |             |             | 
+T_ |          | T_ -> empty | T_ -> empty | T_ -> *FT_ | T_ -> /FT_ |           |             | T_ -> empty | 
+F  | F -> N   |             | F -> -N     |            |            | F -> N    |             |             | 
 N  | N -> id  |             |             |            |            | N -> (E)  |             |             | 
 
 Note: blank means error
