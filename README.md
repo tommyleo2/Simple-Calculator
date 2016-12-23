@@ -33,7 +33,7 @@ N  | N -> id  |             |             |            |            | N -> (E)  
 
 Note: blank means error
 
-## Drawback(s) in the productions
+## Drawback(s) in the implementation
 
 1. The parser using these productions cannot handle expressions like `1+1)` correctly, where left parentheses are less than right parentheses.
    To overcome this drawback, the parser checks if the lexical analyzer has met the end when it is about to return the result.

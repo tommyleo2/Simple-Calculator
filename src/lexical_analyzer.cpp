@@ -42,11 +42,25 @@ Type Lexical::getToken(float *token) throw(exception) {
     /*
       Todo: support dedcimal tokens
     */
-    *token = (float)atoi(exp.c_str() + currentTokenPosition);
-    while (exp[currentTokenPosition] >= '0' &&
-           exp[currentTokenPosition] <= '9') {
-        currentTokenPosition++;
+
+    bool decimalPoint = false;
+    int tmpPostion = currentTokenPosition;
+    while (exp[tmpPostion] >= '0' &&
+           exp[tmpPostion] <= '9' || exp[tmpPostion] == '.') {
+        tmpPostion++;
+        if (exp[tmpPostion] == '.') {
+            if (!decimalPoint) {
+                decimalPoint = true;
+            } else {
+                currentTokenPosition = tmpPostion;
+                throw UnrecognizedTokenException(unrecognizedToken());
+            }
+        }
     }
+
+    *token = atof(exp.c_str() + currentTokenPosition);
+
+    currentTokenPosition = tmpPostion;
     return FLOAT;
 }
 
